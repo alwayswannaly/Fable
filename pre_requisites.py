@@ -3,13 +3,13 @@ import shutil
 from pathlib import Path
 
 # Install SpaCy Dependencies
-# os.system('python3 -m spacy download en_core_web_lg')
-# os.system('python3 -m spacy download en_core_web_sm')
+os.system('python3 -m spacy download en_core_web_lg')
+os.system('python3 -m spacy download en_core_web_sm')
 
 # Install nltk Dependencies
 TRAIN_DIRECTORY = os.path.join(os.getcwd(), "train/")
 
-for i in range(0,4):
+for i in range(0,9):
   os.system(
     "aws s3 sync s3://myinterviewtrainer/user_company_profiles/resumes/000/00{idx}/ {dest}".format(
       idx = i,

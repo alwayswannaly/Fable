@@ -1,0 +1,1 @@
+python3 main.py --type lda $1 --model_name soft_engg

@@ -25,6 +25,7 @@ def loadDefaultNLP(is_big: bool = True) -> Any:
         nlp = spacy.load("en_core_web_lg")
     else:
         nlp = spacy.load("en_core_web_sm")
+    nlp.max_length = 99999999999999999999
     nlp.add_pipe(segment_on_newline, before="parser")
     return nlp
 
