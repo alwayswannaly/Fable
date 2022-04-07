@@ -3,8 +3,8 @@ import shutil
 from pathlib import Path
 
 # Install SpaCy Dependencies
-# os.system('python3 -m spacy download en_core_web_lg')
-# os.system('python3 -m spacy download en_core_web_sm')
+os.system('python3 -m spacy download en_core_web_lg')
+os.system('python3 -m spacy download en_core_web_sm')
 
 # Install nltk Dependencies
 TRAIN_DIRECTORY = os.path.join(os.getcwd(), "train/")
