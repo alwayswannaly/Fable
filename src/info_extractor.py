@@ -64,13 +64,15 @@ class InfoExtractor:
         )
         allSkills = ", ".join(InfoExtractor.extractSkills(doc))
         return {
-            "Name": name,
-            "Email": email,
-            "Number": number,
-            "City/Country": city,
-            "Work Experience:": [w for w in workAndEducation["Work"]],
-            "Education": [e for e in workAndEducation["Education"]],
-            "Skills": allSkills
+            "name": name,
+            "email": email,
+            "number": number,
+            "city": city,
+            "work_exp:": [w for w in workAndEducation["Work"]],
+            "education": [e for e in workAndEducation["Education"]],
+            "work_duration": totalWorkExperience,
+            "education_duration": totalEducationExperience,
+            "skills": allSkills
         }
 
     @staticmethod
