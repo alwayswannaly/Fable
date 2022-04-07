@@ -8,6 +8,7 @@ import gensim
 import os
 import subprocess
 import json
+import sys
 
 from gensim import corpora
 from gensim.models import LdaModel
@@ -24,7 +25,6 @@ from .utils import (
     getAllTokensAndChunks,
     loadDefaultNLP,
 )
-
 
 class RatingModel:
     class RatingModelError(Exception):
@@ -56,14 +56,14 @@ class RatingModel:
                 "type of test not valid. Either 'fixed' or 'lda'"
             )
 
-        print("Loading nlp tools...")
+        # print("Loading nlp tools...")
         if spacy_nlp is None:
             # load default model
             self.nlp = loadDefaultNLP()
         else:
             self.nlp = spacy_nlp
 
-        print("Loading pdf parser...")
+        # print("Loading pdf parser...")
         # takes some time
         from tika import parser
 
@@ -180,7 +180,7 @@ class RatingModel:
         elif train_type != "lda":
             raise RatingModel.RatingModelError("No such train type: %s" % train_type)
 
-        print("Loading resumes...")
+        # print("Loading resumes...")
         pdfs = findDocumentsRecursive(base_dir_path)
         if pdfs is None:
             raise RatingModel.RatingModelError(
@@ -205,7 +205,7 @@ class RatingModel:
 
         pdf_data = defaultdict(list)
 
-        print("Getting resume tokens and chunks...")
+        # print("Getting resume tokens and chunks...")
         for p in pdfs:
             # convert to spacy doc
             doc, _ = loadDocumentIntoSpacy(p, self.parser, self.nlp)
@@ -567,7 +567,7 @@ class RatingModel:
             raise RatingModel.RatingModelError("model is not loaded or trained yet")
         doc, _ = loadDocumentIntoSpacy(filename, self.parser, self.nlp)
 
-        print("Getting rating...")
+        # print("Getting rating...")
         if self._type == "fixed":
             if self.keywords is None:
                 raise RatingModel.RatingModelError("Keywords not found")
@@ -646,12 +646,14 @@ class RatingModel:
         mean = np.mean(self.model["score"])
         sd = np.std(self.model["score"])
 
+        info_dict = {}
         rating = min(10, max(0, round(5 + (final_score-mean)/sd, 2)))
         if info_extractor is not None:
-            print("-" * 10)
-            info_extractor.extractFromFile(filename)
-            print("-" * 10)
-        print("Rating: %.1f" % rating)
+            # print("-" * 10)
+            info_dict = info_extractor.extractFromFile(filename)
+            # print("-" * 10)
+        info_dict["rating"] = rating
+        sys.stdout.write(json.dumps(info_dict))
         if info_extractor is not None:
             subprocess.call(["open", filename])
 

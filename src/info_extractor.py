@@ -3,6 +3,7 @@ import re
 import pandas as pd
 import os
 import sys
+import json
 
 from collections import Counter, defaultdict
 from datetime import datetime
@@ -11,16 +12,17 @@ from .utils import loadDocumentIntoSpacy, countWords, loadDefaultNLP
 from typing import *
 
 WORDS_LIST = {
-    "Work": ["(Work|WORK)", "(Experience(s?)|EXPERIENCE(S?))", "(History|HISTORY)"],
-    "Education": ["(Education|EDUCATION)", "(Qualifications|QUALIFICATIONS)"],
+    "Work": ["(Work|WORK)", "(Experience(s?)|EXPERIENCE(S?))", "(History|HISTORY)", "(Job(s?)|JOB(S?))"],
+    "Education": ["(Education|EDUCATION)", "(Qualification(s?)|QUALIFICATION(S?))", "(School(ing)?|SCHOOL(ING)?)"],
     "Skills": [
         "(Skills|SKILLS)",
         "(Proficiency|PROFICIENCY)",
-        "LANGUAGE",
-        "CERTIFICATION",
+        "(language|LANGUAGE)",
+        "(certification|CERTIFICATION)",
+        "(certificates|CERTIFICATES)",
     ],
     "Projects": ["(Projects|PROJECTS)"],
-    "Activities": ["(Leadership|LEADERSHIP)", "(Activities|ACTIVITIES)"],
+    "Activities": ["(Leadership|LEADERSHIP)", "(Activities|ACTIVITIES)", "(Hobbies|HOBBIES)", "(Hobby|HOBBY)"],
 }
 
 
@@ -35,7 +37,7 @@ class InfoExtractor:
 
     def extractFromFile(self, filename):
         doc, text = loadDocumentIntoSpacy(filename, self.parser, self.nlp)
-        self.extractFromText(doc, text, filename)
+        return self.extractFromText(doc, text, filename)
 
     def extractFromText(self, doc, text, filename):
         name = InfoExtractor.findName(doc, filename)
@@ -61,20 +63,15 @@ class InfoExtractor:
             workAndEducation["Education"]
         )
         allSkills = ", ".join(InfoExtractor.extractSkills(doc))
-        print("Name: %s" % name)
-        print("Email: %s" % email)
-        print("Number: %s" % number)
-        print("City/Country: %s" % city)
-        print("\nWork Experience:")
-        print(totalWorkExperience)
-        for w in workAndEducation["Work"]:
-            print(" - " + w)
-        print("\nEducation:")
-        print(totalEducationExperience)
-        for e in workAndEducation["Education"]:
-            print(" - " + e)
-        print("\nSkills:")
-        print(allSkills)
+        return {
+            "Name": name,
+            "Email": email,
+            "Number": number,
+            "City/Country": city,
+            "Work Experience:": [w for w in workAndEducation["Work"]],
+            "Education": [e for e in workAndEducation["Education"]],
+            "Skills": allSkills
+        }
 
     @staticmethod
     def extractSkills(doc) -> List[str]:

@@ -144,6 +144,8 @@ def getPDFText(filename: str, parser) -> str:
     """
     raw = parser.from_file(filename)
     new_text = raw["content"]
+    if not new_text:
+        return ""
     if "title" in raw["metadata"]:
         title = raw["metadata"]["title"]
         new_text = new_text.replace(title, "")
