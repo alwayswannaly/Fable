@@ -655,7 +655,8 @@ class RatingModel:
         info_dict["rating"] = rating
         sys.stdout.write(json.dumps(info_dict))
         if info_extractor is not None:
-            subprocess.call(["open", filename])
+            pass
+            # subprocess.call(["open", filename])
 
 
 if __name__ == "__main__":
